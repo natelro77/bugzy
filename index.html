@@ -1,84 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bugzy's World 💜</title>
-  <meta name="description" content="A magical private digital space made just for Bugzy - filled with love, surprises, and comfort." />
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-
-  <!-- Custom Tailwind Config -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            poppins: ['Poppins', 'sans-serif'],
-          },
-        },
-      },
-    };
-  </script>
-
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #000;
-    }
-
-    .gradient-text {
-      background: linear-gradient(to right, #a855f7, #ec4899);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .sparkle {
-      background-image: radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px);
-      background-size: 50px 50px;
-      animation: sparkle 10s linear infinite;
-    }
-
-    @keyframes sparkle {
-      from { background-position: 0 0; }
-      to { background-position: 100% 100%; }
-    }
-
-    .animate-wink {
-      animation: wink 2s infinite alternate;
-    }
-
-    @keyframes wink {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.02) rotate(-1deg); }
-      100% { transform: scale(1); }
-    }
-
-    .btn-back {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: #6b21a8;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .btn-back:hover {
-      background: #a855f7;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bugzy's World 💜</title>
+    <meta name="description" content="A magical private digital space made just for Bugzy - filled with love, surprises, and comfort.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                        'quicksand': ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .gradient-text-purple-pink {
+            background: linear-gradient(to right, hsl(262, 83%, 70%), hsl(328, 85%, 70%));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .gradient-text-purple-light {
+            background: linear-gradient(to right, hsl(266, 85%, 78%), hsl(210, 40%, 80%));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .card-gradient {
+            background: linear-gradient(135deg, 
+                hsl(258, 90%, 66%, 0.4), 
+                hsl(262, 83%, 70%, 0.4)
+            );
+            backdrop-filter: blur(10px);
+        }
+        
+        .hover-glow:hover {
+            box-shadow: 0 0 25px hsl(262, 83%, 70%, 0.6);
+        }
+        
+        .animate-glow-pulse {
+            animation: glowPulse 2s ease-in-out infinite alternate;
+        }
+        
+        .animate-bounce-gentle {
+            animation: bounceGentle 2s ease-in-out infinite;
+        }
+        
+        @keyframes glowPulse {
+            0% { 
+                text-shadow: 0 0 20px hsl(262, 83%, 70%, 0.5); 
+            }
+            100% { 
+                text-shadow: 0 0 30px hsl(262, 83%, 70%, 0.8), 0 0 40px hsl(266, 85%, 78%, 0.3); 
+            }
+        }
+        
+        @keyframes bounceGentle {
+            0%, 100% { 
+                transform: translateY(0px); 
+            }
+            50% { 
+                transform: translateY(-10px); 
+            }
+        }
+        
+        .star-field {
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #ffffff, transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(2px 2px at 160px 30px, #ffffff, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+        }
+    </style>
 </head>
-<body class="text-white">
-  <button class="btn-back" onclick="window.location.href='index.html'">← Back</button>
-  
-  <div id="root"></div>
-
-  <script src="script.js"></script>
+<body class="bg-black text-white min-h-screen">
+    <div id="root"></div>
+    <script src="script.js"></script>
 </body>
 </html>
