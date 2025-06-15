@@ -1,465 +1,82 @@
-// Bugzy's World - Consolidated JavaScript
-// This is a React application converted to vanilla JavaScript
-
-// Authentication state management
-let isAuthenticated = false;
-let currentUser = null;
-
-// Router state
-let currentRoute = '/';
-
-// DOM utility functions
-function createElement(tag, props = {}, ...children) {
-  const element = document.createElement(tag);
-  
-  Object.entries(props).forEach(([key, value]) => {
-    if (key === 'className') {
-      element.className = value;
-    } else if (key.startsWith('on') && typeof value === 'function') {
-      element.addEventListener(key.substring(2).toLowerCase(), value);
-    } else {
-      element.setAttribute(key, value);
+// Inject style CSS into the document
+const style = document.createElement("style");
+style.textContent = `
+    body {
+        font-family: 'Poppins', sans-serif;
     }
-  });
-  
-  children.forEach(child => {
-    if (typeof child === 'string') {
-      element.appendChild(document.createTextNode(child));
-    } else if (child) {
-      element.appendChild(child);
-    }
-  });
-  
-  return element;
-}
 
-// Animation utilities
-function animateElement(element, keyframes, options = {}) {
-  if (element.animate) {
-    return element.animate(keyframes, {
-      duration: 1000,
-      iterations: 1,
-      ...options
-    });
-  }
-}
-
-// Floating elements component
-function createFloatingElements() {
-  const container = createElement('div', {
-    className: 'fixed inset-0 pointer-events-none z-0'
-  });
-
-  // Star field background
-  const starField = createElement('div', {
-    className: 'star-field w-full h-full opacity-60'
-  });
-  container.appendChild(starField);
-
-  // Floating items data
-  const floatingItems = [
-    { icon: '💖', color: 'text-pink-400', delay: 0, x: '10%', y: '20%' },
-    { icon: '⭐', color: 'text-purple-400', delay: 1000, x: '80%', y: '40%' },
-    { icon: '💖', color: 'text-pink-400', delay: 2000, x: '20%', y: '70%' },
-    { icon: '⭐', color: 'text-purple-300', delay: 1500, x: '90%', y: '20%' },
-    { icon: '✨', color: 'text-purple-400', delay: 3000, x: '30%', y: '60%' },
-    { icon: '💖', color: 'text-pink-400', delay: 500, x: '70%', y: '80%' }
-  ];
-
-  floatingItems.forEach((item, index) => {
-    const element = createElement('div', {
-      className: `absolute ${item.color} text-xl opacity-60`,
-      style: `left: ${item.x}; top: ${item.y}; font-size: 24px;`
-    }, item.icon);
-
-    container.appendChild(element);
-
-    // Animate floating elements
-    setTimeout(() => {
-      if (element.animate) {
-        element.animate([
-          { transform: 'translateY(0px)', opacity: 0.6 },
-          { transform: 'translateY(-20px)', opacity: 1 },
-          { transform: 'translateY(0px)', opacity: 0.6 }
-        ], {
-          duration: 3000,
-          iterations: Infinity,
-          easing: 'ease-in-out'
-        });
-      }
-    }, item.delay);
-  });
-
-  return container;
-}
-
-// Landing page
-function createLandingPage() {
-  const container = createElement('div', {
-    className: 'min-h-screen flex items-center justify-center bg-black text-white relative overflow-hidden'
-  });
-
-  container.appendChild(createFloatingElements());
-
-  const content = createElement('div', {
-    className: 'text-center z-10 relative max-w-2xl mx-auto px-6'
-  });
-
-  const title = createElement('h1', {
-    className: 'text-6xl md:text-8xl font-bold mb-8 gradient-text-purple-pink animate-glow-pulse'
-  }, "Bugzy's World 💜");
-
-  const subtitle = createElement('p', {
-    className: 'text-xl md:text-2xl mb-12 text-purple-200 animate-fade-in'
-  }, 'A magical private digital space made just for you - filled with love, surprises, and comfort.');
-
-  const passwordInput = createElement('input', {
-    type: 'password',
-    placeholder: 'Enter the magic word...',
-    className: 'w-full max-w-md mx-auto mb-2 px-6 py-4 text-lg bg-purple-900/30 border border-purple-400/50 rounded-full text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent backdrop-blur-sm',
-    id: 'passwordInput'
-  });
-
-  const hint = createElement('p', {
-    className: 'text-sm text-purple-300 mb-6 text-center italic'
-  }, '💡 Hint: your middle name + my fav number');
-
-  const enterButton = createElement('button', {
-    className: 'px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-full text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 animate-bounce-gentle',
-    onclick: handleLogin
-  }, 'Enter My World ✨');
-
-  content.appendChild(title);
-  content.appendChild(subtitle);
-  content.appendChild(passwordInput);
-  content.appendChild(hint);
-  content.appendChild(enterButton);
-  container.appendChild(content);
-
-  return container;
-}
-
-// Main navigation page
-function createMainPage() {
-  const container = createElement('div', {
-    className: 'min-h-screen bg-black text-white relative overflow-hidden'
-  });
-
-  container.appendChild(createFloatingElements());
-
-  const content = createElement('div', {
-    className: 'relative z-10 max-w-6xl mx-auto px-6 py-12'
-  });
-
-  const header = createElement('div', {
-    className: 'text-center mb-16'
-  });
-
-  const title = createElement('h1', {
-    className: 'text-5xl md:text-7xl font-bold mb-6 gradient-text-purple-pink animate-glow-pulse'
-  }, "Welcome to Your World 💜");
-
-  const subtitle = createElement('p', {
-    className: 'text-xl text-purple-200 max-w-2xl mx-auto'
-  }, 'Choose your adventure, beautiful soul');
-
-  header.appendChild(title);
-  header.appendChild(subtitle);
-  content.appendChild(header);
-
-  const navigationItems = [
-    {
-      title: "Love Notes",
-      description: "Sweet messages just for you",
-      icon: "💌",
-      route: "/love-notes"
-    },
-    {
-      title: "Open a Surprise",
-      description: "Random sweet moments",
-      icon: "🎁",
-      route: "/surprise"
-    },
-    {
-      title: "Gift Box",
-      description: "A special surprise awaits",
-      icon: "📦",
-      route: "/gift-box"
-    },
-    {
-      title: "Mirror",
-      description: "See your beautiful self",
-      icon: "🪞",
-      route: "/mirror"
-    },
-    {
-      title: "If You're Sad",
-      description: "Comfort when you need it",
-      icon: "🌧️",
-      route: "/comfort"
-    }
-  ];
-
-  const grid = createElement('div', {
-    className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
-  });
-
-  navigationItems.forEach(item => {
-    const card = createElement('div', {
-      className: 'card-gradient rounded-3xl p-8 hover:scale-105 transition-all duration-300 cursor-pointer hover-glow border border-purple-400/30',
-      onclick: () => navigateTo(item.route)
-    });
-
-    const icon = createElement('div', {
-      className: 'text-6xl mb-4 text-center animate-bounce-gentle'
-    }, item.icon);
-
-    const cardTitle = createElement('h3', {
-      className: 'text-2xl font-bold mb-3 text-center gradient-text-purple-light'
-    }, item.title);
-
-    const description = createElement('p', {
-      className: 'text-purple-200 text-center'
-    }, item.description);
-
-    card.appendChild(icon);
-    card.appendChild(cardTitle);
-    card.appendChild(description);
-    grid.appendChild(card);
-  });
-
-  content.appendChild(grid);
-  container.appendChild(content);
-
-  return container;
-}
-
-// Simple page creator for other routes
-function createSimplePage(title, content, emoji = '💜') {
-  const container = createElement('div', {
-    className: 'min-h-screen bg-black text-white relative overflow-hidden'
-  });
-
-  container.appendChild(createFloatingElements());
-
-  const pageContent = createElement('div', {
-    className: 'relative z-10 max-w-4xl mx-auto px-6 py-12'
-  });
-
-  const header = createElement('div', {
-    className: 'text-center mb-12'
-  });
-
-  const backButton = createElement('button', {
-    className: 'absolute top-6 left-6 px-4 py-2 bg-purple-600/50 hover:bg-purple-600/70 rounded-full text-white transition-all duration-200',
-    onclick: () => navigateTo('/')
-  }, '← Back to World');
-
-  const pageTitle = createElement('h1', {
-    className: 'text-5xl md:text-6xl font-bold mb-6 gradient-text-purple-pink'
-  }, `${title} ${emoji}`);
-
-  const pageText = createElement('div', {
-    className: 'text-xl text-purple-200 max-w-3xl mx-auto card-gradient rounded-2xl p-8'
-  }, content);
-
-  header.appendChild(pageTitle);
-  pageContent.appendChild(backButton);
-  pageContent.appendChild(header);
-  pageContent.appendChild(pageText);
-  container.appendChild(pageContent);
-
-  return container;
-}
-
-// Authentication handler
-function handleLogin() {
-  const passwordInput = document.getElementById('passwordInput');
-  const password = passwordInput.value.toLowerCase().trim();
-  
-  // Simple password check (you can modify this)
-  if (password === 'leigh7') {
-    isAuthenticated = true;
-    currentUser = 'Bugzy';
-    navigateTo('/');
-  } else {
-    // Show error animation
-    passwordInput.style.borderColor = '#ef4444';
-    passwordInput.value = '';
-    passwordInput.placeholder = 'Try again, beautiful 💜';
-    
-    setTimeout(() => {
-      passwordInput.style.borderColor = '';
-      passwordInput.placeholder = 'Enter the magic word...';
-    }, 2000);
-  }
-}
-
-// Navigation function
-function navigateTo(route) {
-  currentRoute = route;
-  renderCurrentPage();
-}
-
-// Page renderer
-function renderCurrentPage() {
-  const app = document.getElementById('root');
-  if (!app) return;
-
-  // Clear current content
-  app.innerHTML = '';
-
-  let page;
-
-  if (!isAuthenticated) {
-    page = createLandingPage();
-  } else {
-    switch (currentRoute) {
-      case '/':
-        page = createMainPage();
-        break;
-      case '/love-notes':
-        page = createSimplePage(
-          'Love Notes',
-          'Every day I fall more in love with your beautiful soul. You bring magic into every moment, and I am so grateful to have you in my life. Your smile lights up my world, and your laugh is my favorite song. You are absolutely perfect just as you are. 💕'
-        );
-        break;
-      case '/surprise':
-        const surprises = [
-          'You are the most beautiful person, inside and out! ✨',
-          'Did you know your smile can light up an entire room? 😊',
-          'You make everything better just by being you 💖',
-          'I believe in you and all your dreams! 🌟',
-          'You are stronger than you know and braver than you feel 💪',
-          'Your kindness makes the world a better place 🌍'
-        ];
-        const randomSurprise = surprises[Math.floor(Math.random() * surprises.length)];
-        page = createSimplePage('Surprise!', randomSurprise, '🎉');
-        break;
-      case '/gift-box':
-        page = createSimplePage(
-          'Gift Box',
-          'Inside this magical gift box is the most precious gift of all - YOU! You are a gift to this world, bringing joy, love, and light wherever you go. Never forget how special and loved you are. 🎁✨',
-          '🎁'
-        );
-        break;
-      case '/mirror':
-        page = createSimplePage(
-          'Mirror Mirror',
-          'Look in this magic mirror and see what I see - the most beautiful, kind, intelligent, and amazing person in the world. You are absolutely radiant, and your inner beauty shines brighter than any star. ✨',
-          '🪞'
-        );
-        break;
-      case '/comfort':
-        page = createSimplePage(
-          'Comfort Corner',
-          'Hey beautiful, it\'s okay to feel sad sometimes. You don\'t have to be strong all the time. I\'m here for you, always. Take deep breaths, be gentle with yourself, and remember that this feeling will pass. You are loved beyond measure. 🤗💜',
-          '🌧️'
-        );
-        break;
-      default:
-        page = createSimplePage('Page Not Found', 'This magical place doesn\'t exist yet! Let\'s go back home. 🏠', '❓');
-    }
-  }
-
-  app.appendChild(page);
-}
-
-// Initialize the application
-function initApp() {
-  // Wait for DOM to be ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderCurrentPage);
-  } else {
-    renderCurrentPage();
-  }
-
-  // Handle browser back/forward buttons
-  window.addEventListener('popstate', (event) => {
-    currentRoute = window.location.pathname;
-    renderCurrentPage();
-  });
-}
-
-// Start the application
-initApp();
-
-// Add some global styles programmatically
-function addGlobalStyles() {
-  const style = document.createElement('style');
-  style.textContent = `
     .gradient-text-purple-pink {
-      background: linear-gradient(to right, hsl(262, 83%, 70%), hsl(328, 85%, 70%));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+        background: linear-gradient(to right, hsl(262, 83%, 70%), hsl(328, 85%, 70%));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
-    
+
     .gradient-text-purple-light {
-      background: linear-gradient(to right, hsl(266, 85%, 78%), hsl(210, 40%, 80%));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+        background: linear-gradient(to right, hsl(266, 85%, 78%), hsl(210, 40%, 80%));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
-    
+
     .card-gradient {
-      background: linear-gradient(135deg, 
-        hsl(258, 90%, 66%, 0.4), 
-        hsl(262, 83%, 70%, 0.4)
-      );
-      backdrop-filter: blur(10px);
+        background: linear-gradient(135deg, 
+            hsl(258, 90%, 66%, 0.4), 
+            hsl(262, 83%, 70%, 0.4)
+        );
+        backdrop-filter: blur(10px);
     }
-    
+
     .hover-glow:hover {
-      box-shadow: 0 0 25px hsl(262, 83%, 70%, 0.6);
+        box-shadow: 0 0 25px hsl(262, 83%, 70%, 0.6);
     }
-    
+
     .animate-glow-pulse {
-      animation: glowPulse 2s ease-in-out infinite alternate;
+        animation: glowPulse 2s ease-in-out infinite alternate;
     }
-    
+
     .animate-bounce-gentle {
-      animation: bounceGentle 2s ease-in-out infinite;
+        animation: bounceGentle 2s ease-in-out infinite;
     }
-    
+
     @keyframes glowPulse {
-      0% { 
-        text-shadow: 0 0 20px hsl(262, 83%, 70%, 0.5); 
-      }
-      100% { 
-        text-shadow: 0 0 30px hsl(262, 83%, 70%, 0.8), 0 0 40px hsl(266, 85%, 78%, 0.3); 
-      }
+        0% { 
+            text-shadow: 0 0 20px hsl(262, 83%, 70%, 0.5); 
+        }
+        100% { 
+            text-shadow: 0 0 30px hsl(262, 83%, 70%, 0.8), 0 0 40px hsl(266, 85%, 78%, 0.3); 
+        }
     }
-    
+
     @keyframes bounceGentle {
-      0%, 100% { 
-        transform: translateY(0px); 
-      }
-      50% { 
-        transform: translateY(-10px); 
-      }
+        0%, 100% { 
+            transform: translateY(0px); 
+        }
+        50% { 
+            transform: translateY(-10px); 
+        }
     }
-    
+
     .star-field {
-      background-image: 
-        radial-gradient(2px 2px at 20px 30px, #ffffff, transparent),
-        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-        radial-gradient(1px 1px at 90px 40px, #ffffff, transparent),
-        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
-        radial-gradient(2px 2px at 160px 30px, #ffffff, transparent);
-      background-repeat: repeat;
-      background-size: 200px 100px;
+        background-image: 
+            radial-gradient(2px 2px at 20px 30px, #ffffff, transparent),
+            radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+            radial-gradient(1px 1px at 90px 40px, #ffffff, transparent),
+            radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+            radial-gradient(2px 2px at 160px 30px, #ffffff, transparent);
+        background-repeat: repeat;
+        background-size: 200px 100px;
     }
-  `;
-  document.head.appendChild(style);
-}
+`;
+document.head.appendChild(style);
 
-// Add styles when script loads
-addGlobalStyles();
-
-// Export functions for external use
-window.BugzysWorld = {
-  navigateTo,
-  handleLogin,
-  initApp
-};
+// Your interactive script can go here (e.g., content creation)
+document.getElementById("root").innerHTML = `
+    <div class="flex flex-col items-center justify-center text-center py-20 px-4 space-y-6 star-field">
+        <h1 class="text-4xl md:text-6xl font-bold gradient-text-purple-pink animate-glow-pulse">Welcome to Bugzy's World 💜</h1>
+        <p class="text-lg md:text-2xl gradient-text-purple-light">A secret magical corner of the universe made just for you.</p>
+        <div class="p-6 rounded-2xl card-gradient max-w-xl hover-glow transition-all duration-300">
+            <p class="text-white text-md md:text-lg">You’re not just loved. You’re adored. Cherished. Worshipped. This world exists because your smile deserves its own galaxy. ✨</p>
+        </div>
+    </div>
+`;
